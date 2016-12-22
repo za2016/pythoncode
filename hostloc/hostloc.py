@@ -14,6 +14,15 @@ login_data={
         ,'quickforward':'yes'
         ,'handlekey':'ls'
     }
+headers={
+    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+    ,'Accept-Encoding':'gzip, deflate, sdch'
+    ,'Accept-Language':'zh-CN,zh;q=0.8,en;q=0.6'
+    ,'Host':'www.hostloc.com'
+    ,'Referer':'http://www.hostloc.com/forum.php'
+    ,'Upgrade-Insecure-Requests':'1'
+    ,'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+}
 
 class HostLoc():
     def __init__(self,username,passwd):
@@ -22,15 +31,9 @@ class HostLoc():
         login_data['username']=username
         login_data['password']=passwd
         self.session=requests.Session()
-        self.session.cookies = cookielib.LWPCookieJar(filename='cookies')
-        try:  
-            self.session.cookies.load(ignore_discard=True)
-            self.pass_jdkey()
-            if self.isLogin():
-                self.login()
-        except:
-            self.pass_jdkey()
-            self.login()
+        self.session.headers=headers
+        self.pass_jdkey()
+        self.login()
 
     def pass_jdkey(self):
         html=self.session.get(index).content
@@ -42,9 +45,7 @@ class HostLoc():
         self.session.get(index)
     
     def login(self):
-        jdurl=self.get_jdkey(url)
         self.session.post(login_url,data=login_data)
-        self.session.cookies.save()
     
     def isLogin(self):
         url='http://www.hostloc.com/home.php?mod=spacecp'
@@ -57,7 +58,7 @@ class HostLoc():
         
     def get_user(self):
         print('parse '+page_url)
-        self.html=self.session.get(page_url).text
+        self.html=self.session.get(page_url).content
         user_pattern=re.compile('space-uid-\d+?.html')
         users=list(set(user_pattern.findall(self.html)))
         self.users=[index+i for i in users]
