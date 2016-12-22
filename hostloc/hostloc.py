@@ -25,12 +25,24 @@ class HostLoc():
         self.session.cookies = cookielib.LWPCookieJar(filename='cookies')
         try:  
             self.session.cookies.load(ignore_discard=True)
+            self.pass_jdkey()
             if self.isLogin():
                 self.login()
         except:
+            self.pass_jdkey()
             self.login()
+
+    def pass_jdkey(self):
+        html=self.session.get(index).content
+        try:
+            jdkey=re.findall('jdfwkey=(.*?)"')[0]
+        except:
+            jdkey=''
+        url=index+'?jdfwkey='+jdkey
+        self.session.get(index)
     
     def login(self):
+        jdurl=self.get_jdkey(url)
         self.session.post(login_url,data=login_data)
         self.session.cookies.save()
     
