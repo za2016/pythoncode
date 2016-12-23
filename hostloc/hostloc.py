@@ -2,9 +2,11 @@
 import requests
 import re 
 import cookielib
+import sys
 
 index='http://www.hostloc.com/'
 page_url='http://www.hostloc.com/forum-45-1.html'
+credit_url='http://www.hostloc.com/home.php?mod=spacecp&ac=credit&showcredit=1'
 login_url='http://www.hostloc.com/member.php?mod=logging&action=login&loginsubmit=yes&infloat=yes&lssubmit=yes&inajax=1'
 login_data={
         'fastloginfield':'username'
@@ -23,7 +25,8 @@ headers={
     ,'Upgrade-Insecure-Requests':'1'
     ,'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
 }
-
+    
+    
 class HostLoc():
     def __init__(self,username,passwd):
         self.username=username
@@ -55,6 +58,18 @@ class HostLoc():
             return False
         else:
             return True
+
+    def get_credit(self):
+        html=self.session.get(credit_url).content
+        credit_pattern=re.compile(r'</ul><ul class="creditl mtm bbda cl"><li class="xi1 cl"><em> 金钱: </em>(.*?)  .*? </li>[\w\W]*?<li><em> 威望: </em>(.*?) </li>[\w\W]*?<li class="cl"><em>积分: </em>(.*?) <span class="xg1">')
+        try:
+            credit=credit_pattern.findall(html)
+            coin,wh,jf=credit[0]
+            print u"金币：%s，威望：%s，积分：%s"%(coin,wh,jf)
+            return True
+        except:
+            print u"获取数据失败，请稍后再试"
+            return False
         
     def get_user(self):
         print('parse '+page_url)
@@ -69,9 +84,14 @@ class HostLoc():
             self.session.get(user)
      
 
+
 if __name__=='__main__':
     username='' #用户名
     passwd='' #密码
     hostloc=HostLoc(username,passwd)
-    hostloc.get_user()
-    hostloc.visit_user()
+    if hostloc.get_credit():
+        hostloc.get_user()
+        hostloc.visit_user()
+        hostloc.get_credit()
+    else:
+        sys.exit(0)
