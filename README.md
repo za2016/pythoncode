@@ -6,6 +6,7 @@
 3. tumblr：Tumblr爬虫
 4. v2ex：v2ex签到脚本
 5. fuliba：福利吧签到脚本
+6. ASCII-ART：图片转字符画
 
 
 > 注：
