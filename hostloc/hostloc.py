@@ -35,8 +35,9 @@ class HostLoc():
         login_data['password']=passwd
         self.session=requests.Session()
         self.session.headers=headers
-        self.pass_jdkey()
         self.login()
+        self.pass_jdkey()
+        
 
     def pass_jdkey(self):
         html=self.session.get(index).content
