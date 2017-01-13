@@ -5,29 +5,9 @@ sys.setdefaultencoding('utf-8')
 from PyQt4 import QtCore, QtGui, uic
 import requests
 import re
+from smms import smms
 
-tc_api='http://image.baidu.com/pictureup/uploadshitu'
-files={
-    'image':''
-    }
-data={'pos':'upload'
-    ,'uptype':'upload_pc'
-    ,'fm':'index'}
-
-def upload_file(filepath):
-    try:
-        img=open(filepath,'rb')
-    except Exception,e:
-        print e
-        sys.exit(0)
-    files['image']=img
-    c=requests.post(tc_api,files=files,data=data)
-    img_url=re.findall('queryImageUrl=(.*?)&querySign',c.url)[0]
-    img1=re.sub('%3A',':',img_url)
-    img2=re.sub('%2F','/',img1)
-    return img2
-
-qtCreatorFile = "baidu_ui.ui" # Enter file here.
+qtCreatorFile = "tuchuang_ui.ui" # Enter file here.
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
@@ -68,17 +48,8 @@ class Worker(QtCore.QThread):
         
 
     def run(self):
-        try:
-            img=open(self.filepath,'rb')
-        except Exception,e:
-            print e
-            sys.exit(0)
-        files['image']=img
-        c=requests.post(tc_api,files=files,data=data)
-        img_url=re.findall('queryImageUrl=(.*?)&querySign',c.url)[0]
-        img1=re.sub('%3A',':',img_url)
-        img2=re.sub('%2F','/',img1)
-        self.sinOut2.emit((img2,True))
+        img=smms(self.filepath)
+        self.sinOut2.emit((img,True))
 
 
 if __name__ == "__main__":
