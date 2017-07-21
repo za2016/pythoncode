@@ -99,7 +99,7 @@ def login(email,passwd):
 def get_pic_from_topic(id,offset):
     global session
     topicurl=topic_url+str(id)
-    _xsrf=get_xsrf(topicurl)
+    #_xsrf=get_xsrf(topicurl)
     pic_re=re.compile('data-actualsrc="(.*?)"')
     inner_data={"url_token":id
                 ,"pagesize":10
@@ -111,7 +111,7 @@ def get_pic_from_topic(id,offset):
     session.headers['Referer']=topicurl
     session.headers['Host']='www.zhihu.com'
     session.headers['Origin']='https://www.zhihu.com'
-    session.headers['X-Xsrftoken']=_xsrf
+    #session.headers['X-Xsrftoken']=_xsrf
     js_data=session.post(api_url,data=data)
     dat=json.loads(js_data.content)['msg']
     pictures=[]
